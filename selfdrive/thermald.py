@@ -160,7 +160,7 @@ def thermald_thread():
   setup_eon_fan()
 
   # prevent LEECO from undervoltage
-  BATT_PERC_OFF = 10 if LEON else 3
+  BATT_PERC_OFF = 10 if LEON else 8
 
   # now loop
   context = zmq.Context()

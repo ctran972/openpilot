@@ -160,7 +160,6 @@ class LongitudinalMpc(object):
     self.tailgating = 0
     self.street_speed = 0
     self.lead_car_gap_shrinking = 0
-    self.lead_car_gap_rapid_shrinking = 0
 
   def send_mpc_solution(self, qp_iterations, calculation_time):
     qp_iterations = max(0, qp_iterations)
@@ -242,7 +241,7 @@ class LongitudinalMpc(object):
       self.tailgating = 0
       
     # Is the car running surface street speeds?
-    if CS.vEgo < 20.20:
+    if CS.vEgo < 19.44:
       self.street_speed = 1
     else:
       self.street_speed = 0
@@ -252,11 +251,6 @@ class LongitudinalMpc(object):
       self.lead_car_gap_shrinking = 1
     else:
       self.lead_car_gap_shrinking = 0
-    # rapid shrinking?
-    if self.v_rel < -3:
-      self.lead_car_gap_rapid_shrinking = 1
-    else:
-      self.lead_car_gap_rapid_shrinking = 0
      
     # Adjust distance from lead car when distance button pressed 
     if CS.readdistancelines == 1:
@@ -274,12 +268,7 @@ class LongitudinalMpc(object):
       
     elif CS.readdistancelines == 2:
       # Tweaks braking for 2 bar distance (default comma - because sometimes it stops too close to the lead car)
-      if self.street_speed and self.lead_car_gap_rapid_shrinking:
-        TR=2.2
-        if self.lastTR != -CS.readdistancelines:
-          self.libmpc.init(MPC_COST_LONG.TTC, 0.0825, MPC_COST_LONG.ACCELERATION, MPC_COST_LONG.JERK)
-          self.lastTR = -CS.readdistancelines
-      elif self.street_speed and (self.lead_car_gap_shrinking or self.tailgating):
+      if self.street_speed and (self.lead_car_gap_shrinking or self.tailgating):
         TR=2.0
         if self.lastTR != -CS.readdistancelines:
           self.libmpc.init(MPC_COST_LONG.TTC, 0.0875, MPC_COST_LONG.ACCELERATION, MPC_COST_LONG.JERK)

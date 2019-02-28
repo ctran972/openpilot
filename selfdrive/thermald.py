@@ -188,7 +188,7 @@ def thermald_thread():
   os.system('echo "1" > /sys/class/power_supply/battery/charging_enabled')
 
   params = Params()
-  
+
   while 1:
     health = messaging.recv_sock(health_sock, wait=True)
     location = messaging.recv_sock(location_sock)
@@ -211,7 +211,7 @@ def thermald_thread():
       msg.thermal.batteryVoltage = int(f.read())
     with open("/sys/class/power_supply/usb/present") as f:
       msg.thermal.usbOnline = bool(int(f.read()))
-        
+
     current_filter.update(msg.thermal.batteryCurrent / 1e6)
 
     # TODO: add car battery voltage check
@@ -305,7 +305,7 @@ def thermald_thread():
       msg.thermal.batteryStatus = "Discharging"
     else:
       msg.thermal.batteryStatus = "Charging"
-      
+
     msg.thermal.chargingDisabled = charging_disabled
     msg.thermal.chargingError = current_filter.x > 1.0   # if current is > 1A out, then charger might be off
     msg.thermal.started = started_ts is not None

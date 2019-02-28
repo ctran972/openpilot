@@ -58,7 +58,6 @@ def process_hud_alert(hud_alert):
   fcw_display = 0
   steer_required = 0
   acc_alert = 0
-  
   if hud_alert == AH.NONE:          # no alert
     pass
   elif hud_alert == AH.FCW:         # FCW
@@ -67,7 +66,7 @@ def process_hud_alert(hud_alert):
     steer_required = hud_alert[1]
   else:                             # any other ACC alert
     acc_alert = hud_alert[1]
-    
+
   return fcw_display, steer_required, acc_alert
 
 
@@ -97,7 +96,7 @@ class CarController(object):
 
   def update(self, sendcan, enabled, CS, frame, actuators, \
              pcm_speed, pcm_override, pcm_cancel_cmd, pcm_accel, \
-             radar_error, hud_v_cruise, hud_show_lanes, hud_show_car, \
+             hud_v_cruise, hud_show_lanes, hud_show_car, \
              hud_alert, snd_beep, snd_chime):
 
     """ Controls thread """
@@ -129,7 +128,7 @@ class CarController(object):
         hud_car = 1
     else:
       hud_car = 0
-      
+
     # For lateral control-only, send chimes as a beep since we don't send 0x1fa
     if CS.CP.radarOffCan:
       snd_beep = snd_beep if snd_beep is not 0 else snd_chime
@@ -164,12 +163,12 @@ class CarController(object):
 
     # Send CAN commands.
     can_sends = []
-    
+
     # Send steering command.
     idx = frame % 4
     can_sends.append(hondacan.create_steering_control(self.packer, apply_steer,
       lkas_active, CS.CP.carFingerprint, idx))
-   
+
     # Send dashboard UI commands.
     if (frame % 10) == 0:
       idx = (frame/10) % 4

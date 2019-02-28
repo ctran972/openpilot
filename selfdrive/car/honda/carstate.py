@@ -3,6 +3,7 @@ from common.kalman.simple_kalman import KF1D
 from selfdrive.can.parser import CANParser, CANDefine
 from selfdrive.config import Conversions as CV
 from selfdrive.car.honda.values import CAR, DBC, STEER_THRESHOLD, SPEED_FACTOR, HONDA_BOSCH
+from selfdrive.kegman_conf import kegman_conf
 
 def parse_gear_shifter(gear, vals):
 
@@ -143,7 +144,8 @@ def get_cam_can_parser(CP):
 
 class CarState(object):
   def __init__(self, CP):
-    self.trMode = 1
+    self.k = kegman_conf()
+    self.trMode = int(self.k.conf['lastTrMode'])     # default to last distance interval on startup
     self.lkMode = True
     self.read_distance_lines_prev = 4
     self.CP = CP
@@ -315,6 +317,8 @@ class CarState(object):
     if self.cruise_setting == 3:
       if cp.vl["SCM_BUTTONS"]["CRUISE_SETTING"] == 0:
         self.trMode = (self.trMode + 1 ) % 4
+        self.k.conf['lastTrMode'] = str(self.trMode)   # write last distance bar setting to file
+        self.k.write_config(self.k.conf) 
         
     # when user presses LKAS button on steering wheel
     if self.cruise_setting == 1:
